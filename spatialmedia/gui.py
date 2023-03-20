@@ -68,7 +68,7 @@ class Application(tk.Frame):
             return
         self.in_file = tmp_in_file
 
-        self.set_message("Current 360 video: %s" % ntpath.basename(self.in_file))
+        self.set_message("%s" % ntpath.basename(self.in_file))
 
         console = Console()
         parsed_metadata = metadata_utils.parse_metadata(self.in_file, console.append)
@@ -143,7 +143,7 @@ class Application(tk.Frame):
             self.in_file, self.save_file, metadata, console.append
         )
         self.set_message(
-            "Successfully saved file to %s\n" % ntpath.basename(self.save_file)
+            "Saved to %s\n" % ntpath.basename(self.save_file)
         )
         self.button_open.configure(state="normal")
         self.update_state()
@@ -153,7 +153,8 @@ class Application(tk.Frame):
         split_filename = os.path.splitext(ntpath.basename(self.in_file))
         base_filename = split_filename[0]
         extension = split_filename[1]
-        self.save_options["initialfile"] = base_filename + "_injected" + extension
+        self.save_options["initialfile"] = base_filename + "_injected"
+        self.save_options["defaultextension"] = ".mp4"
         self.save_file = filedialog.asksaveasfilename(**self.save_options)
         if not self.save_file:
             return
@@ -214,33 +215,20 @@ class Application(tk.Frame):
 
         row = 0
         column = 0
-
-        PAD_X = 10
-
+        
+        PAD_X = 8
+        
         row = row + 1
-        column = 0
-        self.label_message = tk.Label(self)
+        self.label_message = tk.Label(self,wraplength=480,anchor="w")
         self.label_message["text"] = "Click Open to open your 360 video."
-        self.label_message.grid(
-            row=row,
-            column=column,
-            rowspan=1,
-            columnspan=2,
-            padx=PAD_X,
-            pady=10,
-            sticky="w",
-        )
-
-        row = row + 1
-        separator = tk.Frame(self, relief=tk.GROOVE, bd=1, height=2, bg="white")
-        separator.grid(columnspan=row, padx=PAD_X, pady=4, sticky="n" + "e" + "s" + "w")
+        self.label_message.grid(rowspan=3,columnspan=row,padx=PAD_X, sticky="w")
 
         # Spherical Checkbox
-        row += 1
+        row += 3
         self.label_spherical = tk.Label(self, anchor="w")
         self.label_spherical["text"] = "My video is spherical (360)"
         self.label_spherical.grid(
-            row=row, column=column, padx=PAD_X, pady=7, sticky="w"
+            row=row, column=column, padx=PAD_X, pady=4, sticky="w"
         )
         column += 1
 
@@ -254,7 +242,7 @@ class Application(tk.Frame):
         column = 0
         self.label_3D = tk.Label(self, anchor="w")
         self.label_3D["text"] = "My video is stereoscopic 3D (top/bottom layout)"
-        self.label_3D.grid(row=row, column=column, padx=PAD_X, pady=7, sticky="w")
+        self.label_3D.grid(row=row, column=column, padx=PAD_X, pady=4, sticky="w")
         column += 1
 
         self.var_3d = tk.IntVar()
@@ -268,7 +256,7 @@ class Application(tk.Frame):
         self.label_spatial_audio = tk.Label(self, anchor="w", justify=tk.LEFT)
         self.label_spatial_audio["text"] = SPATIAL_AUDIO_LABEL
         self.label_spatial_audio.grid(
-            row=row, column=column, padx=PAD_X, pady=7, sticky="w"
+            row=row, column=column, padx=PAD_X, pady=4, sticky="w"
         )
 
         column += 1
@@ -282,7 +270,7 @@ class Application(tk.Frame):
         row = row + 1
         separator = tk.Frame(self, relief=tk.GROOVE, bd=1, height=2, bg="white")
         separator.grid(
-            columnspan=row, padx=PAD_X, pady=10, sticky="n" + "e" + "s" + "w"
+            columnspan=row, padx=PAD_X, pady=5, sticky="n" + "e" + "s" + "w"
         )
 
         # Button Frame
@@ -312,7 +300,6 @@ class Application(tk.Frame):
         self.open_options["filetypes"] = [("Videos", ("*.mov", "*.mp4"))]
 
         self.save_options = {}
-
         tk.Frame.__init__(self, master)
         self.create_widgets()
         self.pack()
